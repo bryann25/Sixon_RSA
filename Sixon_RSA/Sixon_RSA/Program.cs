@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Numerics;
-using System.Security.Cryptography.X509Certificates;
+
 
 namespace Sixon_RSA
 {
@@ -29,7 +28,7 @@ namespace Sixon_RSA
 
         public static void Run()
         {
-            // 1. Select two different random primes
+            //Select two different random primes
             int p = primeNumbers[rnd.Next(primeNumbers.Count)];
             int q;
             do
@@ -37,11 +36,11 @@ namespace Sixon_RSA
                 q = primeNumbers[rnd.Next(primeNumbers.Count)];
             } while (q == p);
 
-            // 2. Compute n and totient
+            //Compute n and totient
             long n = (long)p * q;
             long totient = (long)(p - 1) * (q - 1);
 
-            // 3. Choose Public Key (PuK) and Private Key (PrK)
+            //Choose Public Key (PuK) and Private Key (PrK)
             long PuK, PrK;
             try
             {
@@ -62,19 +61,32 @@ namespace Sixon_RSA
             Console.WriteLine("Public Key (PuK) = " + PuK);
             Console.WriteLine("Private Key (PrK) = " + PrK);
 
-            // 5. Input message
+            //Input message
             Console.Write("Enter A Number To Encrypt: ");
             long message = long.Parse(Console.ReadLine());
 
-            // 6. Encrypt: Ciphertext = Message^PuK mod n
+            //Encrypt: Ciphertext = Message^PuK mod n
             long ciphertext = ModPow(message, PuK, n);
             Console.WriteLine("Encrypted message: " + ciphertext);
 
-            // 7. Decrypt: Message = Ciphertext^PrK mod n
+            //Decrypt: Message = Ciphertext^PrK mod n
             long decrypted = ModPow(ciphertext, PrK, n);
             Console.WriteLine("Decrypted message: "+ decrypted);
         }
 
+
+        //Calculate Valid Public Key(Puk) 
+        static long GetCoprime(long totient)
+        {
+            for (long Puk = 3; Puk < totient; Puk += 2)
+            {
+                if (GCD(Puk, totient) == 1)
+                    return Puk;
+            }
+            throw new Exception("No valid public key found.");
+        }
+
+        //Calculates the GCD
         static long GCD(long a, long b)
         {
             while (b != 0)
@@ -86,16 +98,7 @@ namespace Sixon_RSA
             return a;
         }
 
-        static long GetCoprime(long totient)
-        {
-            for (long Puk = 3; Puk < totient; Puk += 2)
-            {
-                if (GCD(Puk, totient) == 1)
-                    return Puk;
-            }
-            throw new Exception("No valid public key found.");
-        }
-
+        //To Find the Value of Private Key(Prk)
         static long ModInverse(long PuK, long totient)
         {
             long originalTotient = totient;
@@ -127,6 +130,7 @@ namespace Sixon_RSA
             return currentCoefficient;
         }
 
+        //Modular Exponentiation
         static long ModPow(long baseVal, long exponent, long modulus)
         {
             long result = 1;
