@@ -65,6 +65,12 @@ namespace Sixon_RSA
             Console.Write("Enter A Number To Encrypt: ");
             long message = long.Parse(Console.ReadLine());
 
+            if (message <= 0 || message >= n - 1)
+            {
+                Console.WriteLine("Error: The message must be greater than 0 and less than n - 1 (" + (n - 1) + ").");
+                return;
+            }
+
             //Encrypt: Ciphertext = Message^PuK mod n
             long ciphertext = ModPow(message, PuK, n);
             Console.WriteLine("Encrypted message: " + ciphertext);
@@ -75,6 +81,18 @@ namespace Sixon_RSA
         }
 
 
+        //Calculates the GCD
+        static long GCD(long a, long b)
+        {
+            while (b != 0)
+            {
+                long temp = b;
+                b = a % b;  
+                a = temp;
+            }
+            return a;
+        }
+
         //Calculate Valid Public Key(Puk) 
         static long GetCoprime(long totient)
         {
@@ -84,18 +102,6 @@ namespace Sixon_RSA
                     return Puk;
             }
             throw new Exception("No valid public key found.");
-        }
-
-        //Calculates the GCD
-        static long GCD(long a, long b)
-        {
-            while (b != 0)
-            {
-                long temp = b;
-                b = a % b;
-                a = temp;
-            }
-            return a;
         }
 
         //To Find the Value of Private Key(Prk)
