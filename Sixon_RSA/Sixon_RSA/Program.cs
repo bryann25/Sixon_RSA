@@ -67,7 +67,7 @@ namespace Sixon_RSA
 
             if (message <= 0 || message >= n - 1)
             {
-                Console.WriteLine("Error: The message must be greater than 0 and less than n - 1 (" + (n - 1) + ").");
+                Console.WriteLine("Error: The message must be greater than 0 and less than " + (n - 1) + ".");
                 return;
             }
 
